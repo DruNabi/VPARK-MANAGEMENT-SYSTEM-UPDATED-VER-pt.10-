@@ -56,9 +56,8 @@
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="parking">Parking Map</button>
             <button class="tab-btn" data-tab="vehicles">Vehicles</button>
-            <!-- Admin tab — hidden by default, shown on login -->
             <button class="tab-btn admin-tab-btn" data-tab="admin" id="adminTabBtn" style="display:none;">
-                🛡️ Admin Panel
+                Admin Panel
             </button>
         </div>
 
@@ -93,7 +92,7 @@
 
             <!-- slot Info -->
             <div class="info-panel">
-                <h3>🔍 Selected Slot Information</h3>
+                <h3>Selected Slot Information</h3>
                 <div id="slotInfo" class="slot-info">
                     <p class="placeholder-text">Click on a parking slot to view details</p>
                 </div>
@@ -113,11 +112,10 @@
             </div>
         </div>
 
-        <!-- ADMIN PANEL TAB (hidden until logged in) -->
+        <!-- admin panel tabn-->
         <div id="tab-admin" class="tab-content">
             <div class="admin-panel-header">
                 <div class="admin-panel-title">
-                    <span class="admin-shield">🛡️</span>
                     <div>
                         <h2>Admin Control Panel</h2>
                         <p class="admin-panel-subtitle">Restricted — Authorized Personnel Only</p>
@@ -129,51 +127,49 @@
                 </div>
             </div>
 
-            <!-- admin sub-tabs -->
             <div class="admin-sub-nav">
-                <button class="admin-sub-btn active" data-admintab="reports">📊 Reports</button>
-                <!-- Future admin sub-tabs can go here -->
+                <button class="admin-sub-btn active" data-admintab="reports">Reports</button>
             </div>
 
-            <!-- Reports sub-tab content -->
+            <!-- Reports tab-->
             <div id="admintab-reports" class="admin-sub-content active">
                 <div class="reports-header">
-                    <h2>📊 Parking Reports</h2>
+                    <h2>Parking Reports</h2>
                     <div class="report-actions">
-                        <button class="btn btn-secondary" id="printReportBtn">🖨️ Print Report</button>
-                        <button class="btn btn-primary" id="exportCSVBtn">⬇️ Export CSV</button>
+                        <button class="btn btn-secondary" id="printReportBtn">Print Report</button>
+                        <button class="btn btn-primary" id="exportCSVBtn">⬇Export CSV</button>
                     </div>
                 </div>
 
                 <!-- report summary -->
                 <div class="report-summary">
                     <div class="report-card">
-                        <div class="report-card-icon">🚗</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-total-registered">0</div>
                         <div class="report-card-label">Total Registered</div>
                     </div>
                     <div class="report-card">
-                        <div class="report-card-icon">🅿️</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-active">0</div>
                         <div class="report-card-label">Currently Parked</div>
                     </div>
                     <div class="report-card">
-                        <div class="report-card-icon">🚘</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-lot-a">0</div>
                         <div class="report-card-label">Lot A Occupied</div>
                     </div>
                     <div class="report-card">
-                        <div class="report-card-icon">🏍️</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-lot-b">0</div>
                         <div class="report-card-label">Lot B Occupied</div>
                     </div>
                     <div class="report-card">
-                        <div class="report-card-icon">📅</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-today">0</div>
                         <div class="report-card-label">Registered Today</div>
                     </div>
                     <div class="report-card">
-                        <div class="report-card-icon">🚪</div>
+                        <div class="report-card-icon"></div>
                         <div class="report-card-value" id="rpt-exited">0</div>
                         <div class="report-card-label">Exited Today</div>
                     </div>
