@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP Parking Lot Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/vp logo - bg remover.ico" type="image/icon">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <img src="images/vp logo - bg remover.png" alt="VP Logo" class="logo">
+                <div class="header-text">
+                    <h1>VP Parking Lot Management System</h1>
+                    <p class="subtitle">Look for lot, Park the spot</p>
+                </div>
+                <div class="header-clock">
+                    <div id="liveClock" class="live-clock">00:00:00</div>
+                    <div id="liveDate" class="live-date">Loading...</div>
+                </div>
+                <!-- DITO UNG ADMIN BUTTON (login ilagay)-->
+                <div class="admin-header-btn-wrap">
+                    <button id="adminLoginBtn" class="btn btn-admin-access" title="Admin Access">
+                        Admin
+                    </button>
+                    <button id="adminLogoutBtn" class="btn btn-admin-logout" style="display:none;" title="Logout Admin">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- stats -->
+        <div class="stats-panel">
+            <div class="stat">
+                <span class="stat-icon">🔲</span>
+                <span class="stat-label">Total Slots</span>
+                <span class="stat-value" id="totalSlots">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">✅</span>
+                <span class="stat-label">Available</span>
+                <span class="stat-value available" id="availableSlots">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-icon">🚗</span>
+                <span class="stat-label">Occupied</span>
+                <span class="stat-value occupied" id="occupiedSlots">0</span>
+            </div>
+        </div>
+
+        <!-- navigate -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="parking">Parking Map</button>
+            <button class="tab-btn" data-tab="vehicles">Vehicles</button>
+            <!-- Admin tab — hidden by default, shown on login -->
+            <button class="tab-btn admin-tab-btn" data-tab="admin" id="adminTabBtn" style="display:none;">
+                🛡️ Admin Panel
+            </button>
+        </div>
+
+        <!-- parking map tab -->
+        <div id="tab-parking" class="tab-content active">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="lotSelect">Parking Lot:</label>
+                    <select id="lotSelect">
+                        <option value="A">Lot A — Students (Cars) · 34 slots</option>
+                        <option value="B">Lot B — Students (Motorcycles) · 100 slots</option>
+                    </select>
+                </div>
+                <div class="control-buttons">
+                    <button id="toggleAutoBtn" class="btn btn-primary">Enable Auto-Update</button>
+                    <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+                    <button id="resetBtn" class="btn btn-danger">Reset Layout</button>
+                    <button id="registerBtn" class="btn btn-register">Register Vehicle</button>
+                </div>
+            </div>
+
+            <!-- occupancy legend -->
+            <div class="legend">
+                <div class="legend-item"><div class="slot available-slot"></div><span>Available</span></div>
+                <div class="legend-item"><div class="slot occupied-slot"></div><span>Occupied</span></div>
+            </div>
+
+            <!-- parking Grid -->
+            <div class="parking-lot-wrapper">
+                <div class="parking-lot" id="parkingLot"></div>
+            </div>
+
+            <!-- slot Info -->
+            <div class="info-panel">
+                <h3>🔍 Selected Slot Information</h3>
+                <div id="slotInfo" class="slot-info">
+                    <p class="placeholder-text">Click on a parking slot to view details</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- vehicles tab -->
+        <div id="tab-vehicles" class="tab-content">
+            <div class="vehicles-header">
+                <h2>Registered Vehicles</h2>
+                <div class="vehicles-search">
+                    <input type="text" id="vehicleSearch" placeholder="Search by STI code, phone number, or lot...">
+                </div>
+            </div>
+            <div id="vehicleTable" class="vehicle-table-wrapper">
+                <p class="placeholder-text">No vehicles registered yet.</p>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL TAB (hidden until logged in) -->
+        <div id="tab-admin" class="tab-content">
+            <div class="admin-panel-header">
+                <div class="admin-panel-title">
+                    <span class="admin-shield">🛡️</span>
+                    <div>
+                        <h2>Admin Control Panel</h2>
+                        <p class="admin-panel-subtitle">Restricted — Authorized Personnel Only</p>
+                    </div>
+                </div>
+                <div class="admin-panel-badge">
+                    <span class="admin-badge-dot"></span>
+                    ADMIN SESSION ACTIVE
+                </div>
+            </div>
+
+            <!-- admin sub-tabs -->
+            <div class="admin-sub-nav">
+                <button class="admin-sub-btn active" data-admintab="reports">📊 Reports</button>
+                <!-- Future admin sub-tabs can go here -->
+            </div>
+
+            <!-- Reports sub-tab content -->
+            <div id="admintab-reports" class="admin-sub-content active">
+                <div class="reports-header">
+                    <h2>📊 Parking Reports</h2>
+                    <div class="report-actions">
+                        <button class="btn btn-secondary" id="printReportBtn">🖨️ Print Report</button>
+                        <button class="btn btn-primary" id="exportCSVBtn">⬇️ Export CSV</button>
+                    </div>
+                </div>
+
+                <!-- report summary -->
+                <div class="report-summary">
+                    <div class="report-card">
+                        <div class="report-card-icon">🚗</div>
+                        <div class="report-card-value" id="rpt-total-registered">0</div>
+                        <div class="report-card-label">Total Registered</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-icon">🅿️</div>
+                        <div class="report-card-value" id="rpt-active">0</div>
+                        <div class="report-card-label">Currently Parked</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-icon">🚘</div>
+                        <div class="report-card-value" id="rpt-lot-a">0</div>
+                        <div class="report-card-label">Lot A Occupied</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-icon">🏍️</div>
+                        <div class="report-card-value" id="rpt-lot-b">0</div>
+                        <div class="report-card-label">Lot B Occupied</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-icon">📅</div>
+                        <div class="report-card-value" id="rpt-today">0</div>
+                        <div class="report-card-label">Registered Today</div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-icon">🚪</div>
+                        <div class="report-card-value" id="rpt-exited">0</div>
+                        <div class="report-card-label">Exited Today</div>
+                    </div>
+                </div>
+
+                <!-- Occupancy bars -->
+                <div class="report-section">
+                    <h3>Lot Occupancy Overview</h3>
+                    <div class="occupancy-bars">
+                        <div class="occ-bar-wrapper">
+                            <label>Lot A (Cars)</label>
+                            <div class="occ-bar-track">
+                                <div class="occ-bar-fill" id="barLotA" style="width:0%"></div>
+                            </div>
+                            <span id="barLotALabel">0 / 34</span>
+                        </div>
+                        <div class="occ-bar-wrapper">
+                            <label>Lot B (Motorcycles)</label>
+                            <div class="occ-bar-track">
+                                <div class="occ-bar-fill lot-b" id="barLotB" style="width:0%"></div>
+                            </div>
+                            <span id="barLotBLabel">0 / 100</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Log Table -->
+                <div class="report-section">
+                    <div class="report-table-header">
+                        <h3>Full Parking Log</h3>
+                        <div class="report-filter">
+                            <select id="reportFilterLot">
+                                <option value="all">All Lots</option>
+                                <option value="A">Lot A</option>
+                                <option value="B">Lot B</option>
+                            </select>
+                            <select id="reportFilterStatus">
+                                <option value="all">All Status</option>
+                                <option value="active">Currently Parked</option>
+                                <option value="exited">Exited</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="reportTable" class="report-table-wrapper">
+                        <p class="placeholder-text">No data available yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content admin-login-modal-content">
+            <div class="modal-header admin-login-header">
+                <div class="admin-login-icon">🛡️</div>
+                <h2>Admin Access</h2>
+                <span class="close-admin-login">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="admin-login-desc">This area is restricted to authorized administrators only. Enter your admin password to continue.</p>
+                <div class="form-group">
+                    <label for="adminLoginPassword">🔐 Admin Password</label>
+                    <input type="password" id="adminLoginPassword" placeholder="Enter admin password" autocomplete="off">
+                    <span id="adminLoginError" class="pin-error"></span>
+                </div>
+                <div class="form-actions">
+                    <button id="submitAdminLogin" class="btn btn-admin-access" style="width:100%;padding:13px;font-size:1em;">Unlock Admin Panel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- registration modal -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register Vehicle</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="vehicleForm" autocomplete="off">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" required placeholder="09XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label for="licensePlate">STI Code *</label>
+                            <input type="text" id="licensePlate" required placeholder="ex:sti-1234" pattern="sti-\d{4}" title="Format: sti-1234">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="parkingLot">Parking Lot *</label>
+                            <select id="parkingLot" required>
+                                <option value="">Select parking lot</option>
+                                <option value="A">Lot A — Students (Cars)</option>
+                                <option value="B">Lot B — Students (Motorcycles)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userType">User Type *</label>
+                            <select id="userType" required>
+                                <option value="">Select user type</option>
+                                <option value="student">Student</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exitPin">🔐 Exit PIN * <small style="color:#888;font-weight:400">(min. 4 characters — remember this to exit)</small></label>
+                        <input type="password" id="exitPin" required placeholder="Create a PIN" minlength="4" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="slotNumber">🔢 Preferred Slot # (optional)</label>
+                        <input type="number" id="slotNumber" placeholder="Leave empty for auto-assignment">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-register">Register Vehicle</button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXIT MODAL -->
+    <div id="exitModal" class="modal">
+        <div class="modal-content" style="max-width:420px">
+            <div class="modal-header">
+                <h2>Vehicle Exit</h2>
+                <span class="close-exit">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="exitSlotInfo" class="exit-slot-info"></div>
+                <div class="form-actions">
+                    <button id="confirmExitBtn" class="btn btn-danger">Confirm Exit</button>
+                    <button id="cancelExitBtn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- notif -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
